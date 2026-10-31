@@ -1,0 +1,247 @@
+import { useEffect, useRef, useState } from 'react';
+import {
+  ChevronDown,
+  Image as ImageIcon,
+  Loader2,
+  Mic,
+  Send,
+  Square,
+  Volume2,
+} from 'lucide-react';
+import type { ChatMessage } from '../../shared/types';
+import { MAX_TURNOS } from '../../shared/limites';
+import { dictationSupported, ttsSupported, useDictation, useReadAloud } from '../speech';
+import MaterialPreview from './MaterialPreview';
+import { useT } from '../i18n';
+
+export default function Chat({
+  messages,
+  draft,
+  setDraft,
+  onSubmit,
+  streaming,
+  disabled,
+  error,
+  material,
+  turnos,
+}: {
+  messages: ChatMessage[];
+  draft: string;
+  setDraft: (v: string) => void;
+  onSubmit: () => void;
+  streaming: boolean;
+  disabled: boolean;
+  error: string | null;
+  /** Turnos ya gastados, para ver venir el tope de la prueba. */
+  turnos: number;
+  /** Solo en movil: el material queda fijo sobre la conversacion. */
+  material?: { url: string; mime: string | null; nombre: string | null } | null;
+}) {
+  const t = useT().chat;
+  const restantes = Math.max(0, MAX_TURNOS - turnos);
+  const [materialAbierto, setMaterialAbierto] = useState(false);
+  const endRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }, [messages]);
+
+  // El dictado agrega lo que vas diciendo al final de lo que ya escribiste.
+  const draftRef = useRef(draft);
+  draftRef.current = draft;
+  const dictado = useDictation((texto) =>
+    setDraft((draftRef.current ? draftRef.current.trimEnd() + ' ' : '') + texto),
+  );
+  const voz = useReadAloud();
+  const puedeDictar = dictationSupported();
+  // Aunque el navegador no tenga voz propia, Azure Speech puede leer igual.
+  const puedeLeer = ttsSupported() || true;
+
+  // Al terminar un turno, el tutor lee su respuesta si la voz esta activada.
+  const [vozAuto, setVozAuto] = useState(false);
+  const ultimoLeido = useRef(-1);
+  useEffect(() => {
+    if (!vozAuto || streaming) return;
+    const i = messages.length - 1;
+    const ultimo = messages[i];
+    if (!ultimo || ultimo.role !== 'assistant' || !ultimo.content.trim()) return;
+    if (ultimoLeido.current === i) return;
+    ultimoLeido.current = i;
+    void voz.speak(i, ultimo.content);
+    // voz.speak cambia de identidad en cada render: no es una dependencia util aqui.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [vozAuto, streaming, messages]);
+
+  return (
+    <section className="flex h-full min-h-0 flex-col gap-3">
+      <div className="flex items-center justify-between gap-2">
+        <h2 className="titular text-base text-tinta">{t.titulo}</h2>
+        {puedeLeer && (
+          <label className="flex cursor-pointer items-center gap-1.5 rounded-full bg-panel px-2.5 py-1 text-xs font-medium ring-1 ring-borde">
+            <input
+              type="checkbox"
+              checked={vozAuto}
+              onChange={(e) => {
+                setVozAuto(e.target.checked);
+                if (!e.target.checked) voz.stop();
+              }}
+              className="accent-rojo"
+            />
+            <Volume2 className="h-3.5 w-3.5" />
+            {t.tutorHabla}
+          </label>
+        )}
+      </div>
+
+      {material && (
+        <button
+          onClick={() => setMaterialAbierto((v) => !v)}
+          aria-expanded={materialAbierto}
+          className="shrink-0 overflow-hidden rounded-medio bg-white text-left ring-1 ring-borde"
+        >
+          <div className="flex items-center gap-2 px-3 py-2">
+            <ImageIcon className="h-3.5 w-3.5 shrink-0 text-tinta-suave/70" />
+            <span className="flex-1 truncate text-xs text-tinta-suave">
+              {material.nombre ?? t.tuMaterial}
+            </span>
+            <ChevronDown
+              className={`h-3.5 w-3.5 shrink-0 text-tinta-suave/70 transition-transform ${
+                materialAbierto ? 'rotate-180' : ''
+              }`}
+            />
+          </div>
+          {materialAbierto && (
+            <div className="px-3 pb-3">
+              <MaterialPreview
+                url={material.url}
+                mime={material.mime}
+                nombre={material.nombre}
+                className="max-h-56"
+              />
+            </div>
+          )}
+        </button>
+      )}
+
+      <div className="min-h-0 flex-1 space-y-3 overflow-y-auto rounded-medio bg-white p-4 ring-1 ring-borde">
+        {messages.length === 0 && (
+          <div className="space-y-2 text-sm text-tinta-suave/70">
+            <p>{t.vacio1}</p>
+            <p>{t.vacio2}</p>
+          </div>
+        )}
+        {messages.map((m, i) => (
+          <div
+            key={i}
+            className={m.role === 'user' ? 'flex justify-end' : 'flex items-end justify-start gap-1'}
+          >
+            <div
+              data-mensaje={m.role}
+              className={
+                m.role === 'user'
+                  ? 'max-w-[85%] rounded-grande rounded-br-sm bg-tinta px-4 py-2 text-sm whitespace-pre-wrap text-white'
+                  : 'max-w-[90%] rounded-grande rounded-bl-sm bg-panel px-4 py-2 text-sm whitespace-pre-wrap text-tinta'
+              }
+            >
+              {m.content ||
+                (streaming && i === messages.length - 1 ? (
+                  <span className="inline-flex gap-1">
+                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-tinta-suave/60" />
+                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-tinta-suave/60 [animation-delay:120ms]" />
+                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-tinta-suave/60 [animation-delay:240ms]" />
+                  </span>
+                ) : (
+                  ''
+                ))}
+            </div>
+            {m.role === 'assistant' && puedeLeer && m.content && (
+              <button
+                onClick={() => voz.speak(i, m.content)}
+                title={voz.speakingId === i ? t.detener : t.leer}
+                aria-label={voz.speakingId === i ? t.detenerLectura : t.leer}
+                className={`shrink-0 rounded-full p-1.5 ring-1 ring-borde ${
+                  voz.speakingId === i ? 'bg-rojo/10 text-rojo' : 'bg-white text-tinta-suave/70'
+                }`}
+              >
+                {voz.speakingId === i ? (
+                  <Square className="h-3.5 w-3.5" />
+                ) : (
+                  <Volume2 className="h-3.5 w-3.5" />
+                )}
+              </button>
+            )}
+          </div>
+        ))}
+        <div ref={endRef} />
+      </div>
+
+      {/* El tope se ve venir: avisar recien al chocar con el seria una trampa. */}
+      {restantes <= 5 && (
+        <p className="rounded-chico bg-panel px-3 py-2 text-[11px] leading-relaxed text-tinta-suave ring-1 ring-rojo/30">
+          {restantes > 0 ? t.quedan(restantes) : t.final}
+        </p>
+      )}
+
+      {(error || dictado.error) && (
+        <p className="rounded-chico bg-red-50 px-3 py-2 text-sm text-red-700 ring-1 ring-red-200">
+          {error ?? dictado.error}
+        </p>
+      )}
+
+      {dictado.listening && (
+        <p className="flex items-center gap-2 text-xs text-tinta-suave">
+          <span className="h-2 w-2 animate-pulse rounded-full bg-red-500" />
+          {t.escucho} {dictado.interim}
+        </p>
+      )}
+
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (dictado.listening) dictado.stop();
+          onSubmit();
+        }}
+        className="flex items-end gap-2"
+      >
+        <textarea
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              if (dictado.listening) dictado.stop();
+              onSubmit();
+            }
+          }}
+          rows={1}
+          placeholder={disabled ? t.conectando : t.escribe}
+          disabled={disabled || streaming}
+          className="max-h-32 flex-1 resize-none rounded-medio border border-borde px-4 py-2.5 text-sm outline-none focus:border-azul"
+        />
+        {puedeDictar && (
+          <button
+            type="button"
+            onClick={dictado.toggle}
+            disabled={disabled || streaming}
+            aria-label={dictado.listening ? t.dejarDictar : t.dictar}
+            title={dictado.listening ? t.dejarDictar : t.dictar}
+            className={`rounded-medio p-2.5 ring-1 disabled:opacity-40 ${
+              dictado.listening
+                ? 'bg-red-600 text-white ring-red-600'
+                : 'bg-white text-tinta-suave ring-borde'
+            }`}
+          >
+            <Mic className="h-5 w-5" />
+          </button>
+        )}
+        <button
+          type="submit"
+          disabled={disabled || streaming || !draft.trim()}
+          aria-label={t.enviar}
+          className="rounded-medio bg-tinta p-2.5 text-white disabled:opacity-40"
+        >
+          {streaming ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
+        </button>
+      </form>
+    </section>
+  );
+}

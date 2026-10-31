@@ -1,0 +1,14 @@
+{
+  "name": "aideatext",
+  "owner": {
+    "name": "AIdeaText",
+    "url": "https://context.aideatext.ai"
+  },
+  "plugins": [
+    {
+      "name": "context",
+      "source": "./",
+      "description": "Tutor socrático con grafo de ideas: material, estudiante y tutor, cada uno con su color."
+    }
+  ]
+}
