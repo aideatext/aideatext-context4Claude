@@ -1,5 +1,6 @@
 {
-  "name": "context",
+  "name": "context-tutor",
+  "displayName": "conText · Tutor socrático",
   "version": "1.0.0",
   "description": "Tutor socrático de conText: ayuda a estudiantes de secundaria a pensar su propio material (foto del cuaderno, PDF, texto u objeto cotidiano) con una pregunta a la vez, y arma el grafo de ideas distinguiendo qué vino del material, qué pensó el estudiante y qué introdujo el tutor.",
   "author": {
@@ -9,5 +10,12 @@
   "homepage": "https://context.aideatext.ai",
   "repository": "https://github.com/aideatext/aideatext-context4Claude",
   "license": "Apache-2.0",
-  "keywords": ["educacion", "tutor-socratico", "grafo-de-ideas", "secundaria", "peru", "education"]
+  "keywords": [
+    "educacion",
+    "tutor-socratico",
+    "grafo-de-ideas",
+    "secundaria",
+    "peru",
+    "education"
+  ]
 }

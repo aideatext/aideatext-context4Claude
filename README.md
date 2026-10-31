@@ -19,14 +19,15 @@ Pide "mi grafo" para verlo, o "mis conexiones" para ver solo lo que pensaste tú
 
 - [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json): manifiesto del plugin.
 - [`skills/tutor-socratico/`](skills/tutor-socratico/SKILL.md): el método de conText como skill.
-- [`app/`](app/): la app web conText (Express + React), desplegada en
-  https://context.aideatext.ai. Ver [`app/README.md`](app/README.md).
+- [`.claude-plugin/icon.png`](.claude-plugin/icon.png): icono del plugin.
+
+La app web conText vive en su propio repositorio y está desplegada en https://context.aideatext.ai.
 
 ## Instalar en Claude Code
 
 ```
 /plugin marketplace add aideatext/aideatext-context4Claude
-/plugin install context@aideatext
+/plugin install context-tutor@aideatext
 ```
 
 ## Licencia
