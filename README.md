@@ -1,19 +1,24 @@
 # conText para Claude
 
-Plugin de Claude de **conText**, el tutor socrático de [AIdeaText](https://context.aideatext.ai)
-para estudiantes de secundaria.
+Plugin de Claude de **conText**, el tutor socrático de [AIdeaText](https://context.aideatext.ai).
 
-El estudiante comparte su material (una foto del cuaderno, un PDF, un texto o la foto de un objeto
-cotidiano) y Claude conversa con una pregunta a la vez, sin hacerle la tarea. Mientras conversan,
+La persona comparte su material (apuntes, un PDF, un texto, un diagrama o la foto de un objeto
+cotidiano) y Claude conversa con una pregunta a la vez, sin hacerle el trabajo. Mientras conversan,
 arma un grafo de ideas que distingue tres orígenes:
 
 | Color | Origen | Significa |
 |---|---|---|
-| Gris pizarra `#4e5a68` | `material` | Estaba en lo que subiste |
-| **Azul** `#0b7ec5` | `estudiante` | **Lo pensaste tú** |
+| Gris pizarra `#4e5a68` | `material` | Estaba en lo que compartiste |
+| **Azul** `#0b7ec5` | `persona` | **Lo pensaste tú** |
 | Rojo `#ae0025` | `tutor` | Lo introdujo el tutor |
 
 Pide "mi grafo" para verlo, o "mis conexiones" para ver solo lo que pensaste tú.
+
+## Para quién es
+
+Por defecto, **personas adultas (18 años o más) de cualquier nivel educativo**: universitarios,
+posgrado, docentes, investigadores, profesionales y autodidactas. El tutor adapta el lenguaje a un
+menor de edad solo si la persona lo indica explícitamente.
 
 ## Contenido
 

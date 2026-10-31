@@ -8,7 +8,7 @@
     {
       "name": "context-tutor",
       "source": "./",
-      "description": "Tutor socrático con grafo de ideas: material, estudiante y tutor, cada uno con su color."
+      "description": "Tutor socrático con grafo de ideas: material, persona y tutor, cada uno con su color."
     }
   ]
 }
