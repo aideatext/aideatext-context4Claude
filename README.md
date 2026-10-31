@@ -1,40 +1,40 @@
-# conText para Claude
+# conText for Claude
 
-Plugin de Claude de **conText**, el tutor socrático de [AIdeaText](https://context.aideatext.ai).
+Claude plugin for **conText**, the Socratic tutor by [AIdeaText](https://context.aideatext.ai).
 
-La persona comparte su material (apuntes, un PDF, un texto, un diagrama o la foto de un objeto
-cotidiano) y Claude conversa con una pregunta a la vez, sin hacerle el trabajo. Mientras conversan,
-arma un grafo de ideas que distingue tres orígenes:
+You share your own material (notes, a PDF, a text, a diagram, or a photo of an everyday object)
+and Claude talks it through with you one question at a time, without doing the work for you. As the
+conversation goes on, it builds a graph of ideas that tells apart three origins:
 
-| Color | Origen | Significa |
+| Color | Origin | Meaning |
 |---|---|---|
-| Gris pizarra `#4e5a68` | `material` | Estaba en lo que compartiste |
-| **Azul** `#0b7ec5` | `persona` | **Lo pensaste tú** |
-| Rojo `#ae0025` | `tutor` | Lo introdujo el tutor |
+| Slate gray `#4e5a68` | `material` | It was in what you shared |
+| **Blue** `#0b7ec5` | `persona` | **You thought of it** |
+| Red `#ae0025` | `tutor` | The tutor brought it in |
 
-Pide "mi grafo" para verlo, o "mis conexiones" para ver solo lo que pensaste tú.
+Ask for "my graph" to see it, or "my connections" to see only what you came up with.
 
-## Para quién es
+## Who it's for
 
-Por defecto, **personas adultas (18 años o más) de cualquier nivel educativo**: universitarios,
-posgrado, docentes, investigadores, profesionales y autodidactas. El tutor adapta el lenguaje a un
-menor de edad solo si la persona lo indica explícitamente.
+By default, **adults (18 or older) at any educational level**: undergraduate and graduate students,
+teachers, researchers, professionals, and self-learners. The tutor adapts its language for a minor
+only when the person says so explicitly.
 
-## Contenido
+## Contents
 
-- [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json): manifiesto del plugin.
-- [`skills/tutor-socratico/`](skills/tutor-socratico/SKILL.md): el método de conText como skill.
-- [`.claude-plugin/icon.png`](.claude-plugin/icon.png): icono del plugin.
+- [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json): plugin manifest.
+- [`skills/tutor-socratico/`](skills/tutor-socratico/SKILL.md): the conText method as a skill.
+- [`.claude-plugin/icon.png`](.claude-plugin/icon.png): plugin icon.
 
-La app web conText vive en su propio repositorio y está desplegada en https://context.aideatext.ai.
+The conText web app lives in its own repository and is deployed at https://context.aideatext.ai.
 
-## Instalar en Claude Code
+## Install in Claude Code
 
 ```
 /plugin marketplace add aideatext/aideatext-context4Claude
 /plugin install context-tutor@aideatext
 ```
 
-## Licencia
+## License
 
-Apache 2.0. Ver [LICENSE](LICENSE).
+Apache 2.0. See [LICENSE](LICENSE).
